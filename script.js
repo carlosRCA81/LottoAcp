@@ -1,4 +1,4 @@
-// CONFIGURACIÓN DE TU NUEVA CUENTA SUPABASE
+// CONFIGURACIÓN SUPABASE
 const SUPABASE_URL = 'https://nwivobbeorubrotxgalr.supabase.co'; 
 const SUPABASE_KEY = 'Sb_publishable_SDWDL5sRPlktWzF9ghQOZA_obNCXDsJ'; 
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -41,6 +41,7 @@ function handleInput(input) {
         animalDiv.innerText = "";
         autoSave(input.id, "");
     }
+    highlightRepeated(); // Ejecuta el resaltado cada vez que escribes
 }
 
 async function autoSave(id, value) {
@@ -48,24 +49,67 @@ async function autoSave(id, value) {
     status.innerText = "Sincronizando...";
     await _supabase.from('resultados').upsert({ celda_id: selectedDate + "_" + id, valor: value });
     status.innerText = "✓ En la Nube";
+    highlightRepeated();
 }
 
 async function loadFromSupabase() {
-    const { data } = await _supabase.from('resultados').select('*').like('celda_id', `${selectedDate}%`);
+    const { data } = await _supabase.from('resultados').select('*');
     if (data) {
         data.forEach(item => {
-            const rid = item.celda_id.split('_')[1];
-            const el = document.getElementById(rid);
-            if (el) {
-                el.value = item.valor;
-                const div = document.getElementById('animal-' + rid);
-                if (animals[item.valor]) div.innerText = animals[item.valor];
+            if(item.celda_id.startsWith(selectedDate)) {
+                const rid = item.celda_id.split('_')[1];
+                const el = document.getElementById(rid);
+                if (el) {
+                    el.value = item.valor;
+                    const div = document.getElementById('animal-' + rid);
+                    if (animals[item.valor]) div.innerText = animals[item.valor];
+                }
             }
         });
+        highlightRepeated();
+    }
+}
+
+// NUEVA FUNCIÓN: RESALTAR NÚMEROS REPETIDOS
+function highlightRepeated() {
+    const inputs = document.querySelectorAll('.cell-input');
+    const counts = {};
+    
+    // Contar cuántas veces sale cada número
+    inputs.forEach(input => {
+        const val = input.value.trim();
+        if (val !== "") counts[val] = (counts[val] || 0) + 1;
+    });
+
+    // Cambiar color si se repite (más de 1 vez)
+    inputs.forEach(input => {
+        const val = input.value.trim();
+        if (counts[val] > 1) {
+            input.style.backgroundColor = "rgba(253, 216, 53, 0.3)"; // Fondo amarillento
+            input.style.color = "#fdd835"; // Texto oro
+            input.style.boxShadow = "0 0 10px #fdd835";
+        } else {
+            input.style.backgroundColor = "#111";
+            input.style.color = "#39ff14";
+            input.style.boxShadow = "none";
+        }
+    });
+}
+
+// NUEVA FUNCIÓN: BUSCAR POR MES
+async function searchByMonth() {
+    const month = prompt("Ingresa el mes y año (Ejemplo: 2026-03)");
+    if (!month) return;
+
+    const { data, error } = await _supabase.from('resultados').select('*').like('celda_id', `${month}%`);
+    if (data && data.length > 0) {
+        alert(`Se encontraron ${data.length} resultados en el mes ${month}. Mira la consola para el detalle o usa el calendario para navegar.`);
+        console.table(data); // Esto te muestra una tabla profesional en las herramientas de Google
+    } else {
+        alert("No hay datos para ese mes.");
     }
 }
 
 function changeDate() { selectedDate = document.getElementById('date-picker').value; updateTable(); }
 function resetWeek() { if(confirm("¿Limpiar pantalla?")) updateTable(); }
 window.onload = initApp;
-                
