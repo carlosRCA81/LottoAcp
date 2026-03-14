@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LottoApp CRL | Personal</title>
+    <title>LottoApp CRL | Inteligente</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -21,18 +21,32 @@
                 <thead>
                     <tr>
                         <th>HORA</th>
-                        <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th>
+                        <th>L</th>
+                        <th>M</th>
+                        <th>M</th>
+                        <th>J</th>
+                        <th>V</th>
+                        <th>S</th>
+                        <th>D</th>
                     </tr>
                 </thead>
-                <tbody id="main-table"></tbody>
+                <tbody id="main-table">
+                    </tbody>
             </table>
         </div>
 
         <div class="action-bar">
-            <div id="save-status" style="color: #888; text-align: center; font-size: 0.8rem;">Conectado</div>
-            <button onclick="resetWeek()" class="btn-reset">🔄 REINICIAR VISTA</button>
+            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold;">
+                Conectado a la Nube
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="resetWeek()" class="btn-reset">🔄 REINICIAR</button>
+                <button onclick="searchByMonth()" class="btn-reset" style="border-color: #00e5ff; color: #00e5ff;">🔍 BUSCAR MES</button>
+            </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
