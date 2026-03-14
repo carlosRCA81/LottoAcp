@@ -12,7 +12,6 @@
         <header>
             <h1 class="neon-text">LOTTOAPP CRL</h1>
             <div class="search-box">
-                <label style="color: #888; font-size: 0.7rem;">SELECCIONA UNA FECHA DE LA SEMANA:</label><br>
                 <input type="date" id="date-picker" onchange="changeDate()">
             </div>
         </header>
@@ -21,22 +20,19 @@
             <table>
                 <thead>
                     <tr id="header-days">
-                        <th>HORA</th>
-                        <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th>
-                    </tr>
+                        </tr>
                 </thead>
-                <tbody id="main-table"></tbody>
+                <tbody id="main-table">
+                    </tbody>
             </table>
         </div>
 
         <div class="action-bar">
-            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold;">Modo Semanario Activo</div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="saveAllToSupabase()" class="btn-save-manual">💾 GUARDAR SEMANA COMPLETA</button>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="resetWeek()" class="btn-reset" style="flex: 1;">🔄 LIMPIAR</button>
-                    <button onclick="searchByMonth()" class="btn-reset" style="flex: 1; border-color: #00e5ff; color: #00e5ff;">🔍 MES</button>
-                </div>
+            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.7rem; margin-bottom: 8px; font-weight: bold;">Modo Semanario Listo</div>
+            <button onclick="saveAllToSupabase()" class="btn-save-manual">💾 GUARDAR TODO EN LA NUBE</button>
+            <div style="display: flex; gap: 8px;">
+                <button onclick="resetView()" class="btn-reset" style="flex: 1;">🔄 LIMPIAR VISTA</button>
+                <button onclick="searchByMonth()" class="btn-reset" style="flex: 1; border-color: #00e5ff; color: #00e5ff;">🔍 BUSCAR MES</button>
             </div>
         </div>
     </div>
