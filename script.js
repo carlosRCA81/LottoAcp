@@ -1,5 +1,6 @@
+// CONFIGURACIÓN EXACTA DE TU SUPABASE
 const SUPABASE_URL = 'https://nwivobbeorubrotxgalr.supabase.co'; 
-const SUPABASE_KEY = 'Sb_publishable_SDWDL5sRPlktWzF9ghQOZA_obNCXDsJ'; 
+const SUPABASE_KEY = 'sb_publishable_SDWDL5sRPlktWzF9ghQOZA_obNCXDsJ'; // Corregida: "sb" en minúsculas
 const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const animals = { "00": "Ballena", "0": "Delfín", "1": "Carnero", "2": "Toro", "3": "Ciempiés", "4": "Alacrán", "5": "León", "6": "Rana", "7": "Perico", "8": "Ratón", "9": "Águila", "10": "Tigre", "11": "Gato", "12": "Caballo", "13": "Mono", "14": "Paloma", "15": "Zorro", "16": "Oso", "17": "Pavo", "18": "Burro", "19": "Chivo", "20": "Cochino", "21": "Gallo", "22": "Camello", "23": "Cebra", "24": "Iguana", "25": "Gallina", "26": "Vaca", "27": "Perro", "28": "Zamuro", "29": "Elefante", "30": "Caimán", "31": "Lapa", "32": "Ardilla", "33": "Pescado", "34": "Venado", "35": "Jirafa", "36": "Culebra" };
@@ -57,18 +58,19 @@ async function saveAllToSupabase() {
     });
 
     if (dataToSave.length === 0) {
-        status.innerText = "⚠️ No hay datos";
+        status.innerText = "⚠️ No hay datos para enviar";
         return;
     }
 
     const { error } = await _supabase.from('resultados').upsert(dataToSave);
 
     if (error) {
-        status.innerText = "❌ Error al conectar";
+        status.innerText = "❌ Error de conexión";
         alert("Error de Supabase: " + error.message);
     } else {
         status.innerText = "✅ ¡TODO EN LA NUBE!";
         status.style.color = "#39ff14";
+        alert("¡Éxito! Tus datos ya están guardados en Supabase.");
     }
 }
 
@@ -106,9 +108,9 @@ async function searchByMonth() {
     const month = prompt("Año-Mes (Ej: 2026-03)");
     if (!month) return;
     const { data } = await _supabase.from('resultados').select('*').like('celda_id', `${month}%`);
-    alert(data ? `Encontrados: ${data.length}` : "Sin datos");
+    alert(data ? `Datos en el mes: ${data.length}` : "No se encontraron datos.");
 }
 
 function changeDate() { selectedDate = document.getElementById('date-picker').value; updateTable(); }
-function resetWeek() { if(confirm("¿Limpiar?")) updateTable(); }
+function resetWeek() { if(confirm("¿Limpiar tabla?")) updateTable(); }
 window.onload = initApp;
