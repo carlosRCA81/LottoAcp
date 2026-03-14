@@ -5,7 +5,7 @@ const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const animals = { "00": "Ballena", "0": "Delfín", "1": "Carnero", "2": "Toro", "3": "Ciempiés", "4": "Alacrán", "5": "León", "6": "Rana", "7": "Perico", "8": "Ratón", "9": "Águila", "10": "Tigre", "11": "Gato", "12": "Caballo", "13": "Mono", "14": "Paloma", "15": "Zorro", "16": "Oso", "17": "Pavo", "18": "Burro", "19": "Chivo", "20": "Cochino", "21": "Gallo", "22": "Camello", "23": "Cebra", "24": "Iguana", "25": "Gallina", "26": "Vaca", "27": "Perro", "28": "Zamuro", "29": "Elefante", "30": "Caimán", "31": "Lapa", "32": "Ardilla", "33": "Pescado", "34": "Venado", "35": "Jirafa", "36": "Culebra" };
 
 const hours = ["8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM"];
-const dayNames = ["L", "M", "M", "J", "V", "S", "D"];
+const dayLabels = ["L", "M", "M", "J", "V", "S", "D"];
 let currentWeekDays = [];
 
 function initApp() {
@@ -20,7 +20,7 @@ function calculateWeek(dateStr) {
     const diff = date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
     
     currentWeekDays = [];
-    const headerRow = document.querySelector('thead tr');
+    const headerRow = document.getElementById('header-days');
     let headerHtml = '<th>HORA</th>';
 
     for (let i = 0; i < 7; i++) {
@@ -29,11 +29,9 @@ function calculateWeek(dateStr) {
         const dayString = d.toISOString().split('T')[0];
         currentWeekDays.push(dayString);
         
-        // Esto pone el nombre y el número del día, ej: "L 09"
         const dayNum = d.getDate().toString().padStart(2, '0');
-        headerHtml += `<th>${dayNames[i]}<br><small>${dayNum}</small></th>`;
+        headerHtml += `<th>${dayLabels[i]}<br><small>${dayNum}</small></th>`;
     }
-    
     headerRow.innerHTML = headerHtml;
     updateTable();
 }
@@ -60,27 +58,12 @@ function updateTable() {
 function handleInput(input) {
     const val = input.value.trim();
     const animalDiv = document.getElementById('animal-' + input.id);
-    if (animals[val]) {
-        animalDiv.innerText = animals[val];
-    } else if (val === "") {
-        animalDiv.innerText = "";
-    }
+    animalDiv.innerText = animals[val] || "";
     highlightRepeated();
 }
 
 async function loadWeekFromSupabase() {
-    // Generamos lista de IDs para buscar toda la semana a la vez
-    let searchIds = [];
-    currentWeekDays.forEach(day => {
-        for(let r=0; r<hours.length; r++) {
-            for(let c=0; c<7; c++) {
-                searchIds.push(`${day}_r${r}c${c}`);
-            }
-        }
-    });
-
-    const { data } = await _supabase.from('resultados').select('*').in('celda_id', searchIds);
-
+    const { data } = await _supabase.from('resultados').select('*').in('celda_id', generateIds());
     if (data) {
         data.forEach(item => {
             const el = document.getElementById(item.celda_id);
@@ -94,33 +77,41 @@ async function loadWeekFromSupabase() {
     }
 }
 
+function generateIds() {
+    let ids = [];
+    currentWeekDays.forEach(day => {
+        for(let r=0; r<hours.length; r++) {
+            for(let c=0; c<7; c++) ids.push(`${day}_r${r}c${c}`);
+        }
+    });
+    return ids;
+}
+
 async function saveAllToSupabase() {
     const status = document.getElementById('save-status');
     const inputs = document.querySelectorAll('.cell-input');
     const dataToSave = [];
-
-    status.innerText = "⏳ Subiendo...";
+    status.innerText = "⏳ Guardando semana...";
     
     inputs.forEach(input => {
         const val = input.value.trim();
-        if (val !== "") {
-            dataToSave.push({ celda_id: input.id, valor: val });
-        }
+        if (val !== "") dataToSave.push({ celda_id: input.id, valor: val });
     });
 
-    if (dataToSave.length === 0) return;
+    if (dataToSave.length === 0) { alert("Nada que guardar"); return; }
 
     const { error } = await _supabase.from('resultados').upsert(dataToSave);
     if (!error) {
-        status.innerText = "✅ Sincronizado";
+        status.innerText = "✅ SEMANA ACTUALIZADA";
         highlightRepeated();
+    } else {
+        alert("Error al guardar: " + error.message);
     }
 }
 
 function highlightRepeated() {
     const inputs = document.querySelectorAll('.cell-input');
     const counts = {};
-
     inputs.forEach(input => {
         const val = input.value.trim();
         if (val !== "") counts[val] = (counts[val] || 0) + 1;
@@ -129,21 +120,24 @@ function highlightRepeated() {
     inputs.forEach(input => {
         const val = input.value.trim();
         if (val === "" || counts[val] === 1) {
-            input.style.color = "#39ff14";
+            input.style.color = "#39ff14"; // Verde
             input.style.boxShadow = "none";
         } else if (counts[val] === 2) {
-            input.style.color = "#fdd835";
-            input.style.boxShadow = "0 0 10px #fdd835";
+            input.style.color = "#fdd835"; // Amarillo
+            input.style.boxShadow = "0 0 8px #fdd835";
         } else if (counts[val] >= 3) {
-            input.style.color = "#ff4444";
-            input.style.boxShadow = "0 0 15px #ff4444";
+            input.style.color = "#ff4444"; // Rojo
+            input.style.boxShadow = "0 0 12px #ff4444";
         }
     });
 }
 
-function changeDate() {
-    calculateWeek(document.getElementById('date-picker').value);
+function changeDate() { calculateWeek(document.getElementById('date-picker').value); }
+function resetView() { if(confirm("¿Limpiar vista?")) updateTable(); }
+async function searchByMonth() {
+    const month = prompt("Año-Mes (Ej: 2026-03)");
+    if (!month) return;
+    const { data } = await _supabase.from('resultados').select('*').like('celda_id', `${month}%`);
+    alert(data ? `Total este mes: ${data.length}` : "No hay datos");
 }
-
 window.onload = initApp;
-                                                                
