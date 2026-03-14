@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LottoApp CRL | Admin</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="glass-container">
+        <header>
+            <h1 class="neon-text">LOTTOAPP CRL</h1>
+            <div class="search-box">
+                <input type="date" id="date-picker" onchange="changeDate()">
+                <button onclick="openMonthModal()" class="btn-month">📅 MES</button>
+            </div>
+            <div id="current-date" class="date-badge"></div>
+            <div id="live-indicator"><span class="dot"></span> EN VIVO</div>
+        </header>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>HORA</th>
+                        <th>LUN</th><th>MAR</th><th>MIÉ</th><th>JUE</th><th>VIE</th><th>SÁB</th><th>DOM</th>
+                    </tr>
+                </thead>
+                <tbody id="main-table"></tbody>
+            </table>
+        </div>
+
+        <div class="action-bar">
+            <div class="status-msg" id="save-status">Conectado a la Nube</div>
+            <button onclick="resetWeek()" class="btn btn-reset">🔄 LIMPIAR VISTA</button>
+        </div>
+    </div>
+
+    <div id="monthModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeMonthModal()">&times;</span>
+            <h2 class="neon-text" style="font-size: 1.2rem;">REPORTE DEL MES</h2>
+            <div id="month-stats" class="stats-container"></div>
+            <div class="table-container">
+                <table id="month-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Animal</th>
+                            <th>Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody id="month-data"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
