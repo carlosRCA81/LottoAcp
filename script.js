@@ -9,14 +9,18 @@ const dayLabels = ["L", "M", "M", "J", "V", "S", "D"];
 let currentWeekDays = [];
 
 function initApp() {
+    // Usamos el 9 de marzo como base si es hoy o la fecha actual
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date-picker').value = today;
     calculateWeek(today);
 }
 
+// ESTA FUNCIÓN ES LA CLAVE: Calcula los 7 días de la semana de la fecha elegida
 function calculateWeek(dateStr) {
     const date = new Date(dateStr + "T12:00:00");
-    const dayOfWeek = date.getDay(); 
+    const dayOfWeek = date.getDay(); // 0 (Dom) a 6 (Sab)
+    
+    // Ajuste para que la semana siempre empiece en LUNES
     const diff = date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
     
     currentWeekDays = [];
@@ -43,6 +47,7 @@ function updateTable() {
         const row = document.createElement('tr');
         let html = `<td class="hour-cell">${h}</td>`;
         for (let c = 0; c < 7; c++) {
+            // El ID es la FECHA REAL de ese día. Así no se borran al cambiar de día.
             const uniqueId = `${currentWeekDays[c]}_r${r}c${c}`;
             html += `<td>
                 <input type="text" class="cell-input" maxlength="2" id="${uniqueId}" oninput="handleInput(this)" placeholder="-">
@@ -52,18 +57,16 @@ function updateTable() {
         row.innerHTML = html;
         tableBody.appendChild(row);
     });
-    loadWeekFromSupabase();
-}
-
-function handleInput(input) {
-    const val = input.value.trim();
-    const animalDiv = document.getElementById('animal-' + input.id);
-    animalDiv.innerText = animals[val] || "";
-    highlightRepeated();
+    loadWeekFromSupabase(); // Carga TODOS los resultados de esos 7 días
 }
 
 async function loadWeekFromSupabase() {
-    const { data } = await _supabase.from('resultados').select('*').in('celda_id', generateIds());
+    // Buscamos en la nube todos los datos que pertenezcan a los 7 días de esta semana
+    const { data, error } = await _supabase
+        .from('resultados')
+        .select('*')
+        .in('celda_id', generateWeekIds());
+
     if (data) {
         data.forEach(item => {
             const el = document.getElementById(item.celda_id);
@@ -77,7 +80,7 @@ async function loadWeekFromSupabase() {
     }
 }
 
-function generateIds() {
+function generateWeekIds() {
     let ids = [];
     currentWeekDays.forEach(day => {
         for(let r=0; r<hours.length; r++) {
@@ -87,25 +90,31 @@ function generateIds() {
     return ids;
 }
 
+function handleInput(input) {
+    const val = input.value.trim();
+    const animalDiv = document.getElementById('animal-' + input.id);
+    animalDiv.innerText = animals[val] || "";
+    highlightRepeated();
+}
+
 async function saveAllToSupabase() {
     const status = document.getElementById('save-status');
     const inputs = document.querySelectorAll('.cell-input');
     const dataToSave = [];
+    
     status.innerText = "⏳ Guardando semana...";
     
     inputs.forEach(input => {
         const val = input.value.trim();
-        if (val !== "") dataToSave.push({ celda_id: input.id, valor: val });
+        if (val !== "") {
+            dataToSave.push({ celda_id: input.id, valor: val });
+        }
     });
-
-    if (dataToSave.length === 0) { alert("Nada que guardar"); return; }
 
     const { error } = await _supabase.from('resultados').upsert(dataToSave);
     if (!error) {
-        status.innerText = "✅ SEMANA ACTUALIZADA";
+        status.innerText = "✅ SEMANA SINCRONIZADA";
         highlightRepeated();
-    } else {
-        alert("Error al guardar: " + error.message);
     }
 }
 
@@ -120,24 +129,20 @@ function highlightRepeated() {
     inputs.forEach(input => {
         const val = input.value.trim();
         if (val === "" || counts[val] === 1) {
-            input.style.color = "#39ff14"; // Verde
+            input.style.color = "#39ff14";
             input.style.boxShadow = "none";
         } else if (counts[val] === 2) {
-            input.style.color = "#fdd835"; // Amarillo
+            input.style.color = "#fdd835";
             input.style.boxShadow = "0 0 8px #fdd835";
         } else if (counts[val] >= 3) {
-            input.style.color = "#ff4444"; // Rojo
+            input.style.color = "#ff4444";
             input.style.boxShadow = "0 0 12px #ff4444";
         }
     });
 }
 
-function changeDate() { calculateWeek(document.getElementById('date-picker').value); }
-function resetView() { if(confirm("¿Limpiar vista?")) updateTable(); }
-async function searchByMonth() {
-    const month = prompt("Año-Mes (Ej: 2026-03)");
-    if (!month) return;
-    const { data } = await _supabase.from('resultados').select('*').like('celda_id', `${month}%`);
-    alert(data ? `Total este mes: ${data.length}` : "No hay datos");
+function changeDate() {
+    calculateWeek(document.getElementById('date-picker').value);
 }
+
 window.onload = initApp;
