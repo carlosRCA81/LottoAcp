@@ -1,19 +1,11 @@
-body {
-    background: #0a0a0a; color: white; font-family: sans-serif;
-    margin: 0; padding: 10px; display: flex; justify-content: center;
-}
-.glass-container {
-    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 15px; padding: 15px; width: 100%; max-width: 400px;
-}
+body { background: #0a0a0a; color: white; font-family: sans-serif; margin: 0; padding: 10px; display: flex; justify-content: center; }
+.glass-container { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 15px; width: 100%; max-width: 400px; }
 .neon-text { color: #fdd835; text-align: center; text-shadow: 0 0 5px #fdd835; }
 .search-box { text-align: center; margin-bottom: 15px; }
 #date-picker { background: #222; border: 1px solid #fdd835; color: white; padding: 5px; border-radius: 5px; }
 table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
 th, td { border: 1px solid #333; text-align: center; padding: 5px; }
-.cell-input {
-    width: 25px; height: 25px; background: #111; border: 1px solid #444;
-    color: #39ff14; text-align: center; border-radius: 4px; font-weight: bold;
-}
-.animal-display { font-size: 0.5rem; color: #888; height: 10px; }
-.btn-reset { width: 100%; margin-top: 15px; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; }
+.cell-input { width: 25px; height: 25px; background: #111; border: 1px solid #444; color: #39ff14; text-align: center; border-radius: 4px; font-weight: bold; outline: none; }
+.animal-display { font-size: 0.5rem; color: #888; height: 10px; margin-top: 2px; }
+.btn-save-manual { width: 100%; padding: 12px; background: #1b5e20; border: 2px solid #39ff14; color: #39ff14; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn-reset { padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; cursor: pointer; }
