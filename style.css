@@ -1,45 +1,19 @@
-:root {
-    --neon-yellow: #fdd835;
-    --neon-green: #39ff14;
-    --bg-dark: #050505;
-}
-
 body {
-    background: var(--bg-dark); color: white; font-family: 'Segoe UI', sans-serif;
+    background: #0a0a0a; color: white; font-family: sans-serif;
     margin: 0; padding: 10px; display: flex; justify-content: center;
 }
-
 .glass-container {
-    background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-    padding: 15px; width: 100%; max-width: 500px;
+    background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 15px; padding: 15px; width: 100%; max-width: 400px;
 }
-
-.neon-text { color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); text-align: center; margin: 5px 0; }
-
-.search-box { display: flex; gap: 8px; justify-content: center; margin-bottom: 10px; }
-#date-picker { background: #222; border: 1px solid var(--neon-green); color: white; border-radius: 5px; padding: 5px; }
-
-.btn-month { background: var(--neon-yellow); border: none; border-radius: 5px; font-weight: bold; padding: 0 10px; }
-
-.table-container { width: 100%; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; background: #111; table-layout: fixed; }
-th { background: #222; color: var(--neon-green); padding: 8px 2px; font-size: 0.6rem; border: 1px solid #333; }
-td { border: 1px solid #333; text-align: center; padding: 4px; height: 60px; }
-
-th:first-child, td:first-child { width: 45px; color: #888; font-size: 0.7rem; }
-
+.neon-text { color: #fdd835; text-align: center; text-shadow: 0 0 5px #fdd835; }
+.search-box { text-align: center; margin-bottom: 15px; }
+#date-picker { background: #222; border: 1px solid #fdd835; color: white; padding: 5px; border-radius: 5px; }
+table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+th, td { border: 1px solid #333; text-align: center; padding: 5px; }
 .cell-input {
-    width: 28px; height: 28px; background: transparent; border: 2px solid #444;
-    color: white; text-align: center; border-radius: 50%; outline: none; font-weight: bold;
+    width: 25px; height: 25px; background: #111; border: 1px solid #444;
+    color: #39ff14; text-align: center; border-radius: 4px; font-weight: bold;
 }
-
-.animal-display { font-size: 0.5rem; margin-top: 3px; font-weight: bold; height: 12px; }
-
-/* Modal Estilos */
-.modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-.modal-content { background: #111; margin: 10% auto; padding: 15px; border: 1px solid var(--neon-green); width: 90%; border-radius: 15px; max-height: 80vh; overflow-y: auto; }
-.close { color: #ff3131; float: right; font-size: 24px; font-weight: bold; }
-
-.status-msg { text-align: center; font-size: 0.7rem; color: #888; margin-top: 10px; }
-.btn-reset { width: 100%; padding: 10px; background: #222; color: white; border: 1px solid #444; border-radius: 8px; margin-top: 10px; font-weight: bold; }
+.animal-display { font-size: 0.5rem; color: #888; height: 10px; }
+.btn-reset { width: 100%; margin-top: 15px; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; }
