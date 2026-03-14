@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LottoApp CRL | Semanario</title>
+    <title>LottoApp CRL | Semanario Pro</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -20,7 +20,9 @@
             <table>
                 <thead>
                     <tr id="header-days">
-                        </tr>
+                        <th>HORA</th>
+                        <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th>
+                    </tr>
                 </thead>
                 <tbody id="main-table">
                     </tbody>
@@ -28,8 +30,8 @@
         </div>
 
         <div class="action-bar">
-            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.7rem; margin-bottom: 8px; font-weight: bold;">Modo Semanario Listo</div>
-            <button onclick="saveAllToSupabase()" class="btn-save-manual">💾 GUARDAR TODO EN LA NUBE</button>
+            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.7rem; margin-bottom: 8px; font-weight: bold;">Semanario Activo</div>
+            <button onclick="saveAllToSupabase()" class="btn-save-manual">💾 GUARDAR TODA LA SEMANA</button>
             <div style="display: flex; gap: 8px;">
                 <button onclick="resetView()" class="btn-reset" style="flex: 1;">🔄 LIMPIAR VISTA</button>
                 <button onclick="searchByMonth()" class="btn-reset" style="flex: 1; border-color: #00e5ff; color: #00e5ff;">🔍 BUSCAR MES</button>
