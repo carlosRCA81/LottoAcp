@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LottoApp CRL | Supabase</title>
+    <title>LottoApp CRL | Semanario</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -12,6 +12,7 @@
         <header>
             <h1 class="neon-text">LOTTOAPP CRL</h1>
             <div class="search-box">
+                <label style="color: #888; font-size: 0.7rem;">SELECCIONA UNA FECHA DE LA SEMANA:</label><br>
                 <input type="date" id="date-picker" onchange="changeDate()">
             </div>
         </header>
@@ -19,7 +20,7 @@
         <div class="table-container">
             <table>
                 <thead>
-                    <tr>
+                    <tr id="header-days">
                         <th>HORA</th>
                         <th>L</th><th>M</th><th>M</th><th>J</th><th>V</th><th>S</th><th>D</th>
                     </tr>
@@ -29,10 +30,9 @@
         </div>
 
         <div class="action-bar">
-            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.9rem; margin-bottom: 12px; font-weight: bold;">Listo</div>
-            
+            <div id="save-status" style="color: #39ff14; text-align: center; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold;">Modo Semanario Activo</div>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button onclick="saveAllToSupabase()" class="btn-save-manual">💾 GUARDAR EN LA NUBE</button>
+                <button onclick="saveAllToSupabase()" class="btn-save-manual">💾 GUARDAR SEMANA COMPLETA</button>
                 <div style="display: flex; gap: 10px;">
                     <button onclick="resetWeek()" class="btn-reset" style="flex: 1;">🔄 LIMPIAR</button>
                     <button onclick="searchByMonth()" class="btn-reset" style="flex: 1; border-color: #00e5ff; color: #00e5ff;">🔍 MES</button>
