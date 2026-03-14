@@ -9,18 +9,15 @@ const dayLabels = ["L", "M", "M", "J", "V", "S", "D"];
 let currentWeekDays = [];
 
 function initApp() {
-    // Usamos el 9 de marzo como base si es hoy o la fecha actual
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('date-picker').value = today;
     calculateWeek(today);
 }
 
-// ESTA FUNCIÓN ES LA CLAVE: Calcula los 7 días de la semana de la fecha elegida
+// Calcula los 7 días (Lunes a Domingo) de la fecha seleccionada
 function calculateWeek(dateStr) {
     const date = new Date(dateStr + "T12:00:00");
-    const dayOfWeek = date.getDay(); // 0 (Dom) a 6 (Sab)
-    
-    // Ajuste para que la semana siempre empiece en LUNES
+    const dayOfWeek = date.getDay(); 
     const diff = date.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1);
     
     currentWeekDays = [];
@@ -47,7 +44,7 @@ function updateTable() {
         const row = document.createElement('tr');
         let html = `<td class="hour-cell">${h}</td>`;
         for (let c = 0; c < 7; c++) {
-            // El ID es la FECHA REAL de ese día. Así no se borran al cambiar de día.
+            // El ID guarda la fecha exacta: ej. "2026-03-09_r0c0"
             const uniqueId = `${currentWeekDays[c]}_r${r}c${c}`;
             html += `<td>
                 <input type="text" class="cell-input" maxlength="2" id="${uniqueId}" oninput="handleInput(this)" placeholder="-">
@@ -57,16 +54,18 @@ function updateTable() {
         row.innerHTML = html;
         tableBody.appendChild(row);
     });
-    loadWeekFromSupabase(); // Carga TODOS los resultados de esos 7 días
+    loadWeekFromSupabase();
 }
 
 async function loadWeekFromSupabase() {
-    // Buscamos en la nube todos los datos que pertenezcan a los 7 días de esta semana
-    const { data, error } = await _supabase
-        .from('resultados')
-        .select('*')
-        .in('celda_id', generateWeekIds());
+    let idsToSearch = [];
+    currentWeekDays.forEach(day => {
+        for(let r=0; r<hours.length; r++) {
+            for(let c=0; c<7; c++) idsToSearch.push(`${day}_r${r}c${c}`);
+        }
+    });
 
+    const { data } = await _supabase.from('resultados').select('*').in('celda_id', idsToSearch);
     if (data) {
         data.forEach(item => {
             const el = document.getElementById(item.celda_id);
@@ -80,16 +79,6 @@ async function loadWeekFromSupabase() {
     }
 }
 
-function generateWeekIds() {
-    let ids = [];
-    currentWeekDays.forEach(day => {
-        for(let r=0; r<hours.length; r++) {
-            for(let c=0; c<7; c++) ids.push(`${day}_r${r}c${c}`);
-        }
-    });
-    return ids;
-}
-
 function handleInput(input) {
     const val = input.value.trim();
     const animalDiv = document.getElementById('animal-' + input.id);
@@ -101,19 +90,16 @@ async function saveAllToSupabase() {
     const status = document.getElementById('save-status');
     const inputs = document.querySelectorAll('.cell-input');
     const dataToSave = [];
-    
-    status.innerText = "⏳ Guardando semana...";
+    status.innerText = "⏳ Guardando...";
     
     inputs.forEach(input => {
         const val = input.value.trim();
-        if (val !== "") {
-            dataToSave.push({ celda_id: input.id, valor: val });
-        }
+        if (val !== "") dataToSave.push({ celda_id: input.id, valor: val });
     });
 
     const { error } = await _supabase.from('resultados').upsert(dataToSave);
     if (!error) {
-        status.innerText = "✅ SEMANA SINCRONIZADA";
+        status.innerText = "✅ SEMANA GUARDADA";
         highlightRepeated();
     }
 }
@@ -141,8 +127,6 @@ function highlightRepeated() {
     });
 }
 
-function changeDate() {
-    calculateWeek(document.getElementById('date-picker').value);
-}
-
+function changeDate() { calculateWeek(document.getElementById('date-picker').value); }
+function resetView() { if(confirm("¿Limpiar vista?")) updateTable(); }
 window.onload = initApp;
